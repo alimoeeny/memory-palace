@@ -30,11 +30,12 @@ export default class MyPlugin extends Plugin {
 
 		this.addRibbonIcon("dice", "Activate view", () => {
 			this.activateView().then(function (_) {
-				// assumes blem.js is in the root of the plugin
-				//import("blem");
-
+				// console.log("ACTIVATE");
+				// assumes ma.js is in the root of the plugin
+				// import("ma");
 				// alternatively we need to add app://obsidian.md to cors setting on the server
-				import("https://blem.lol/blem.js");
+				// import("https://localhost:8443/ma.js");
+				// console.log("loaded?!");
 			});
 		});
 
@@ -198,6 +199,16 @@ export class BlemView extends ItemView {
 		return "Example view";
 	}
 
+	loadTheGame() {
+		var maSource = "https://localhost:8443/ma.js";
+		var s = document.createElement("script");
+		s.setAttribute("id", "ma_js_script");
+		s.setAttribute("type", "text/javascript");
+		s.setAttribute("src", maSource);
+		document.body.appendChild(s);
+		console.log("we are ready to go");
+	}
+
 	async onOpen() {
 		const container = this.containerEl.children[1];
 		container.empty();
@@ -208,6 +219,7 @@ export class BlemView extends ItemView {
 		// container.createEl("script", { attr: { src: "blem.js" } });
 		console.log("we have a canvas");
 		console.log(`${document.getElementById("webgl")}`);
+		this.loadTheGame();
 	}
 
 	async onClose() {
