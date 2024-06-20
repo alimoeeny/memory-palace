@@ -26,7 +26,7 @@ export default class MyPlugin extends Plugin {
 		await this.loadSettings();
 
 		console.log("we are here!");
-		this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new BlemView(leaf));
+		this.registerView(VIEW_TYPE_EXAMPLE, (leaf) => new MemLocView(leaf));
 
 		this.addRibbonIcon("dice", "Activate view", () => {
 			this.activateView().then(function (_) {
@@ -186,7 +186,7 @@ import { ItemView, WorkspaceLeaf } from "obsidian";
 
 export const VIEW_TYPE_EXAMPLE = "example-view";
 
-export class BlemView extends ItemView {
+export class MemLocView extends ItemView {
 	constructor(leaf: WorkspaceLeaf) {
 		super(leaf);
 	}
@@ -206,6 +206,52 @@ export class BlemView extends ItemView {
 		s.setAttribute("type", "text/javascript");
 		s.setAttribute("src", maSource);
 		document.body.appendChild(s);
+
+		let evl = function (e: CustomEvent) {
+			console.log(
+				`EVENT ${e.type} -> ${JSON.stringify(e.detail.keys())}`
+			);
+			// "memloc_save_data";
+			// "memloc_load_data";
+			// "memloc_show_note";
+			// "memloc_show_new_note_dialog";
+
+			var cmd = e.detail.get("cmd");
+			if (cmd === "memloc_show_new_note_dialog") {
+				console.log("SHOW THE DAMN NEW NOTE DIALOG");
+			} else if (cmd === "memloc_show_note") {
+				console.log("SHOW THE NOTE ");
+			} else if (cmd === "memloc_load_data") {
+				console.log("let's load data and send it in");
+			} else if (cmd === "memloc_save_data") {
+				console.log("let's save the world");
+				Plugin.
+			} else {
+				console.error(`got a command I don't understand: ${cmd}`);
+			}
+
+			if (e.detail.get("loading_spinner") === "show") {
+				setTimeout(() => {
+					var loadingIndicator = document.getElementById("root");
+					if (!!loadingIndicator) {
+						loadingIndicator.hidden = false;
+					}
+					console.log("show the spinner");
+				}, 50);
+			}
+			if (e.detail.get("loading_spinner") === "hide") {
+				setTimeout(() => {
+					var loadingIndicator = document.getElementById("root");
+					if (!!loadingIndicator) {
+						loadingIndicator.hidden = true;
+					}
+					console.log("hide the spinner");
+				}, 50);
+			}
+		};
+		window.addEventListener("memloc_custom_event", evl);
+		document.body.addEventListener("memloc_custom_event", evl);
+
 		console.log("we are ready to go");
 	}
 
@@ -216,7 +262,7 @@ export class BlemView extends ItemView {
 		container.createEl("canvas", {
 			attr: { id: "webgl", style: "width: 100%; height: 100%" },
 		});
-		// container.createEl("script", { attr: { src: "blem.js" } });
+		// container.createEl("script", { attr: { src: "ma.js" } });
 		console.log("we have a canvas");
 		console.log(`${document.getElementById("webgl")}`);
 		this.loadTheGame();
