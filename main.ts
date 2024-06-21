@@ -16,10 +16,12 @@ const MEM_LOC_USER_VISIBLE_NAME = "Memory Palace";
 // TODO: add an svg as an icon addIcon(iconId: string, svgContent: string): void;
 
 interface MemLocPluginSettings {
+	spaceSnapshotPrefix: string;
 	muteAll: boolean;
 }
 
 const DEFAULT_SETTINGS: MemLocPluginSettings = {
+	spaceSnapshotPrefix: "mem-pal-snapshot.json",
 	muteAll: false,
 };
 
@@ -27,6 +29,7 @@ export default class MemLocPlugin extends Plugin {
 	settings: MemLocPluginSettings;
 
 	async onload() {
+		console.log("on PLUGIN LOAD ");
 		await this.loadSettings();
 		this.registerView(MEMLOC_VIEW_TYPE, (leaf) => new MemLocView(leaf));
 
@@ -44,56 +47,61 @@ export default class MemLocPlugin extends Plugin {
 		});
 
 		// This creates an icon in the left ribbon.
-		// const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
-		// 	// Called when the user clicks the icon.
-		// 	new Notice('This is a notice!');
-		// });
-		// // Perform additional things with the ribbon
-		// ribbonIconEl.addClass('my-plugin-ribbon-class');
+		const ribbonIconEl = this.addRibbonIcon(
+			"MEMPAL",
+			"Memory Palace",
+			(evt: MouseEvent) => {
+				// Called when the user clicks the icon.
+				new Notice("This is a notice!");
+			}
+		);
+		// Perform additional things with the ribbon
+		ribbonIconEl.addClass("ma-plugin-ribbon-class");
 
 		// // This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		// const statusBarItemEl = this.addStatusBarItem();
-		// statusBarItemEl.setText('Status Bar Text');
+		const statusBarItemEl = this.addStatusBarItem();
+		statusBarItemEl.setText("MemPal Status?");
 
-		// // This adds a simple command that can be triggered anywhere
-		// this.addCommand({
-		// 	id: 'open-sample-modal-simple',
-		// 	name: 'Open sample modal (simple)',
-		// 	callback: () => {
-		// 		new SampleModal(this.app).open();
-		// 	}
-		// });
-		// // This adds an editor command that can perform some operation on the current editor instance
-		// this.addCommand({
-		// 	id: 'sample-editor-command',
-		// 	name: 'Sample editor command',
-		// 	editorCallback: (editor: Editor, view: MarkdownView) => {
-		// 		console.log(editor.getSelection());
-		// 		editor.replaceSelection('Sample Editor Command');
-		// 	}
-		// });
-		// // This adds a complex command that can check whether the current state of the app allows execution of the command
-		// this.addCommand({
-		// 	id: 'open-sample-modal-complex',
-		// 	name: 'Open sample modal (complex)',
-		// 	checkCallback: (checking: boolean) => {
-		// 		// Conditions to check
-		// 		const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-		// 		if (markdownView) {
-		// 			// If checking is true, we're simply "checking" if the command can be run.
-		// 			// If checking is false, then we want to actually perform the operation.
-		// 			if (!checking) {
-		// 				new SampleModal(this.app).open();
-		// 			}
+		// This adds a simple command that can be triggered anywhere
+		this.addCommand({
+			id: "open-mempal-modal-simple",
+			name: "Open mempal modal (simple)",
+			callback: () => {
+				new MemLocModal(this.app).open();
+			},
+		});
+		// This adds an editor command that can perform some operation on the current editor instance
+		this.addCommand({
+			id: "sample-editor-command",
+			name: "Sample editor command",
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				console.log(editor.getSelection());
+				editor.replaceSelection("Sample Editor Command");
+			},
+		});
+		// This adds a complex command that can check whether the current state of the app allows execution of the command
+		this.addCommand({
+			id: "open-sample-modal-complex",
+			name: "Open sample modal (complex)",
+			checkCallback: (checking: boolean) => {
+				// Conditions to check
+				const markdownView =
+					this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					// If checking is true, we're simply "checking" if the command can be run.
+					// If checking is false, then we want to actually perform the operation.
+					if (!checking) {
+						new MemLocModal(this.app).open();
+					}
 
-		// 			// This command will only show up in Command Palette when the check function returns true
-		// 			return true;
-		// 		}
-		// 	}
-		// });
+					// This command will only show up in Command Palette when the check function returns true
+					return true;
+				}
+			},
+		});
 
-		// // This adds a settings tab so the user can configure various aspects of the plugin
-		// this.addSettingTab(new SampleSettingTab(this.app, this));
+		// This adds a settings tab so the user can configure various aspects of the plugin
+		this.addSettingTab(new MemLocSettingTab(this.app, this));
 
 		// // If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
 		// // Using this function will automatically remove the event listener when this plugin is disabled.
@@ -105,7 +113,9 @@ export default class MemLocPlugin extends Plugin {
 		// this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
-	onunload() {}
+	onunload() {
+		console.log("on PLUGIN UN-LOAD ");
+	}
 
 	async loadSettings() {
 		this.settings = Object.assign(
@@ -120,6 +130,7 @@ export default class MemLocPlugin extends Plugin {
 	}
 
 	async activateView() {
+		console.log("on ACTIVATE VIEW");
 		const { workspace } = this.app;
 
 		let leaf: WorkspaceLeaf | null = null;
@@ -142,26 +153,28 @@ export default class MemLocPlugin extends Plugin {
 	}
 }
 
-class SampleModal extends Modal {
+class MemLocModal extends Modal {
 	constructor(app: App) {
 		super(app);
 	}
 
 	onOpen() {
+		console.log("on MODAL OPEN");
 		const { contentEl } = this;
 		contentEl.setText("Woah!");
 	}
 
 	onClose() {
+		console.log("on MODAL CLOSE");
 		const { contentEl } = this;
 		contentEl.empty();
 	}
 }
 
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+class MemLocSettingTab extends PluginSettingTab {
+	plugin: MemLocPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: MemLocPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -172,14 +185,25 @@ class SampleSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName("Setting #1")
-			.setDesc("It's a secret")
+			.setName("Mute All")
+			.setDesc("I want peace and quiet")
+			.addToggle((muteAll) =>
+				muteAll
+					.setValue(this.plugin.settings.muteAll)
+					.onChange(async (value) => {
+						this.plugin.settings.muteAll = value;
+						await this.plugin.saveSettings();
+					})
+			);
+		new Setting(containerEl)
+			.setName("Snapshot save file prefix")
+			.setDesc("Your Space is being automatically saved to this file")
 			.addText((text) =>
 				text
 					.setPlaceholder("Enter your secret")
-					.setValue(this.plugin.settings.mySetting)
+					.setValue(this.plugin.settings.spaceSnapshotPrefix)
 					.onChange(async (value) => {
-						this.plugin.settings.mySetting = value;
+						this.plugin.settings.spaceSnapshotPrefix = value;
 						await this.plugin.saveSettings();
 					})
 			);
@@ -203,6 +227,25 @@ export class MemLocView extends ItemView {
 		return "Memory Palace";
 	}
 
+	loadIt = async (app: App, e: CustomEvent) => {
+		console.log("let's load data and send it in");
+		// var filename = await app.fileManager.getAvailablePathForAttachment( "snapshot.json");
+		var filename = "snapshot.json";
+		console.log(`THIS IS THE FILE NAME we are going to use ${filename}`);
+		var snapShotFile = await app.vault.getFileByPath(filename);
+		if (snapShotFile != null) {
+			var snapshot = await app.vault.read(snapShotFile);
+			var data = new Map<String, String>();
+			data.set("snapshot", snapshot);
+			var ce = new CustomEvent("memloc_call_in", { detail: data });
+			document.dispatchEvent(ce);
+			console.log(`this is the data I loaded:\n ${snapshot} `);
+			window.dispatchEvent(ce);
+		} else {
+			console.error("Couldn't find the snapshot file");
+		}
+	};
+
 	saveIt = async (app: App, e: CustomEvent) => {
 		console.log("let's save the world");
 		console.log("this is ", app, typeof app);
@@ -214,18 +257,9 @@ export class MemLocView extends ItemView {
 		);
 		console.log("normalizedFile:", filename);
 		this.app.vault.create(filename, snapshot);
-
-		// this.app.valut.adapter
-		// 	.write(np, snapshot)
-		// 	.then(() => {
-		// 		console.log("write ok");
-		// 	})
-		// 	.catch((e) => {
-		// 		console.error(`failed to write ${e}`);
-		// 	});
 	};
 
-	loadTheGame(app: App, saveIt) {
+	loadTheGame(app: App, saveIt, loadIt) {
 		var maSource = "https://localhost:8443/ma.js";
 		var s = document.createElement("script");
 		s.setAttribute("id", "ma_js_script");
@@ -248,12 +282,7 @@ export class MemLocView extends ItemView {
 			} else if (cmd === "memloc_show_note") {
 				console.log("SHOW THE NOTE ");
 			} else if (cmd === "memloc_load_data") {
-				console.log("let's load data and send it in");
-				var snapshot = this.app.loadData();
-				console.log(`this is the data I loaded:\n ${snapshot} `);
-				document.dispatchEvent(
-					new CustomEvent("memloc_call_in", snapshot)
-				);
+				loadIt(app, e);
 			} else if (cmd === "memloc_save_data") {
 				saveIt(app, e);
 			} else {
@@ -282,24 +311,73 @@ export class MemLocView extends ItemView {
 		window.addEventListener("memloc_custom_event", evl);
 		document.body.addEventListener("memloc_custom_event", evl);
 
+		// ==========================================================================
+		// function addEventListenerAll(target, listener, ...otherArguments) {
+		// 	// install listeners for all natively triggered events
+		// 	for (const key in target) {
+		// 		if (/^on/.test(key)) {
+		// 			const eventType = key.substr(2);
+		// 			target.addEventListener(
+		// 				eventType,
+		// 				listener,
+		// 				...otherArguments
+		// 			);
+		// 		}
+		// 	}
+
+		// 	// dynamically install listeners for all manually triggered events, just-in-time before they're dispatched ;D
+		// 	const dispatchEvent_original = EventTarget.prototype.dispatchEvent;
+		// 	function dispatchEvent(event) {
+		// 		target.addEventListener(
+		// 			event.type,
+		// 			listener,
+		// 			...otherArguments
+		// 		); // multiple identical listeners are automatically discarded
+		// 		dispatchEvent_original.apply(this, arguments);
+		// 	}
+		// 	EventTarget.prototype.dispatchEvent = dispatchEvent;
+		// 	if (EventTarget.prototype.dispatchEvent !== dispatchEvent)
+		// 		throw new Error(`Browser is smarter than you think!`);
+		// }
+		// // usage example
+		// addEventListenerAll(window, (evt) => {
+		// 	console.log(evt.type, evt);
+		// });
+		// document.body.click();
+		// document.body.dispatchEvent(new Event("omg!", { bubbles: true }));
+
+		// // usage example with `useCapture`
+		// // (also receives `bubbles: false` events, but in reverse order)
+		// addEventListenerAll(
+		// 	window,
+		// 	(evt) => {
+		// 		console.log(evt.type, evt);
+		// 	},
+		// 	true
+		// );
+		// document.body.dispatchEvent(new Event("omfggg!", { bubbles: false }));
+		// ==========================================================================
+
 		console.log("we are ready to go");
 	}
 
 	async onOpen() {
+		console.log("on MemLocView OPEN? what should we do?");
 		const container = this.containerEl.children[1];
 		container.empty();
-		container.createEl("h4", { text: "Example view" });
+		container.createEl("h4", { text: "Memory Palace" });
 		container.createEl("canvas", {
 			attr: { id: "webgl", style: "width: 100%; height: 100%" },
 		});
 		// container.createEl("script", { attr: { src: "ma.js" } });
 		console.log("we have a canvas");
 		console.log(`${document.getElementById("webgl")}`);
-		this.loadTheGame(this.app, this.saveIt);
+		this.loadTheGame(this.app, this.saveIt, this.loadIt);
 	}
 
 	async onClose() {
 		// Nothing to clean up.
+		console.log("on MemLocView CLOSE? what should we do?");
 	}
 }
 
