@@ -34,7 +34,7 @@ export default class MemLocPlugin extends Plugin {
 
 		this.addRibbonIcon("MEMPAL", MEM_LOC_USER_VISIBLE_NAME, () => {
 			this.activateView().then(function (_) {
-				// console.log("ACTIVATE");
+				console.log("ACTIVATE");
 				// assumes ma.js is in the root of the plugin
 				// import("ma");
 				// alternatively we need to add app://obsidian.md to cors setting on the server
@@ -321,13 +321,10 @@ const memPalIconSVGTEXT = `
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
      id="namedview1"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
      borderopacity="0.25"
      inkscape:showpageshadow="2"
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="6.5747121"
      inkscape:cx="64.717663"
@@ -342,7 +339,7 @@ const memPalIconSVGTEXT = `
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"><path
-       style="fill:#1d1f1e;stroke:none;stroke-width:1.28585"
+       style="fill:#888;stroke:none;stroke-width:1.28585"
        d="m 11.303577,0.90922897 -0.0097,2.39495163 2.147899,0.010911 V 0.90940627 H 11.30342 m 5.13208,0 V 3.3150913 h 2.138369 V 0.90940627 H 16.4355 M 8.7373739,3.7962174 V 6.2019025 H 10.875743 V 3.7962174 H 8.7373739 m 5.1320801,0 0.03977,2.4504059 2.098617,-0.044735 -0.03576,-2.3653969 -2.102569,-0.040233 m 2.566045,2.4056851 h 2.13837 C 18.461658,5.7725756 18.717455,4.6861719 18.383125,4.2992197 17.952382,3.8006909 16.909328,4.0500849 16.697866,4.0188254 c -0.420597,-0.062191 0.02522,1.0828577 -0.262318,2.183118 m 2.566046,-2.4056851 v 2.4056851 h 2.138358 L 21.062001,3.9232058 18.961891,3.7068306 M 8.7374709,6.6830832 V 9.0887688 H 10.87584 V 6.6830832 H 8.7374709 m 2.5660461,0 v 2.4056856 h 2.138357 V 6.6830832 h -2.138357 m 2.566033,0 v 2.4056856 h 2.13837 V 6.6830832 h -2.13837 m 5.132092,0 V 9.0887688 H 21.14 V 6.6830832 H 19.001642 M 8.7374709,9.5699086 C 7.9888736,13.590789 8.9814118,16.737292 10.87584,20.154913 7.9563026,22.322293 7.1519078,25.000339 7.0267763,28.815375 H 22.423029 C 22.3983,25.209786 22.081863,22.398274 19.001642,20.636054 23.879818,8.1855306 17.536598,10.551622 8.7374709,9.5699086 M 20.284659,13.900138 c -0.438986,3.513405 -1.525028,6.114135 -4.704415,7.217041 l -2.068408,-0.32371 c -9.0888739,-5.75697 0.158557,-9.727989 6.772823,-6.893331"
        id="path1"
        sodipodi:nodetypes="ccccccccccccccccccccccsscccccccccccccccccccccccccccccccccccc" /></g></svg>
